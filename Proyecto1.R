@@ -26,7 +26,7 @@ token = content(response)$access_token
 authorization.header = paste0("Bearer ", token)
 
 
-PlaylistNueva = readline(prompt="Ingrese nombre la playlist a crear: ")
+
 Cancion = readline(prompt="Ingrese nombre de la cancion que quiere utilizar: ")
 
 search_track = search_spotify(Cancion, type = c("track"),
@@ -86,8 +86,9 @@ df <- scale(new[,2:10])
 #no sigo adelante con esta lista, ya que no es el modelo seleccionado. 
 
 #modelo 2
-#utilizare solo una muestra de los datos
-set.seed(42)
+#utilizare solo una muestra de los datos, decidi quedarme con este modelo gracias a la forma que tiene de mostrar los datos
+# y la facilidad de manejar grandes cantidades de datos. 
+set.seed(42) 
 df2 = df[sample(nrow(df), 1000), ]
 df2<- rbind(df2, df[Cancion$uri,]) 
 row.names(df2)[1001] <- track_features$uri
@@ -111,8 +112,12 @@ playlist_data = cluster_data[cluster_data$nuevo_df.value.cluster_tracks.== selec
 new_playlist = playlist_data[sample(nrow(playlist_data), 55), ]
 
 View(new_playlist) #lista de canciones similares a la cancion ingresada, esta lista es exportable y se puede subir a spotify
+write.table(new_playlist, "PlaylistNueva") #muesta el numero de la cancion en la data que nos dieron, el URI con el que se puede buscar la cancion
+#y el cluster al que pertenece
+
 
 #creando lista en spotify
+PlaylistNueva = readline(prompt="Ingrese nombre la playlist a crear: ")
 user_id <- readline(prompt = "Ingrese su user id, ingresar URI string: ")
 auth_token <- get_spotify_authorization_code(scope = scope)
 
