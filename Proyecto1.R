@@ -38,7 +38,7 @@ print(busqueda)
 
 #search_filtered = subset(search_track, select= c("name", "album.name", "uri"))
 #selected_track = "0OiXVxQHUFxvYxQew4xyhD" #se escoge el uri de la cancion que queremos utilizar
-selected<- readline(prompt = "Seleccione numero de la canción de acuerdo a la tabla recien vista: ")#
+selected<- readline(prompt = "Seleccione numero de la canción de acuerdo al listado recien mostrado: ")#
 Cancion= busqueda[selected,1:4]
 selected_id = pull(Cancion, var=4)
 selected_uri = pull(Cancion, var=3)
@@ -106,43 +106,47 @@ cluster_tracks=order(nuevo_df$value)
 
 
 cluster_data = data.frame(row.names(df2),nuevo_df$value[cluster_tracks])
-selected_cluster = cluster_data[1001, 2] #escogi quedarme con que cluster quedarme
+selected_cluster = cluster_data[1001, 2] #escogi aca con que cluster quedarme
 #selecciono 55 canciones, lo que podria ser cercano a 3 hrs
 playlist_data = cluster_data[cluster_data$nuevo_df.value.cluster_tracks.== selected_cluster, ]
 new_playlist = playlist_data[sample(nrow(playlist_data), 55), ]
-
-View(new_playlist) #lista de canciones similares a la cancion ingresada, esta lista es exportable y se puede subir a spotify
-write.table(new_playlist, "PlaylistNueva") #muesta el numero de la cancion en la data que nos dieron, el URI con el que se puede buscar la cancion
+PlaylistNueva = readline(prompt="Ingrese nombre la playlist a crear: ")
+#lista de canciones similares a la cancion ingresada, esta lista es exportable y se puede subir a spotify
+write.table(new_playlist, PlaylistNueva) #muesta el numero de la cancion en la data que nos dieron, el URI con el que se puede buscar la cancion
 #y el cluster al que pertenece
 
 
 #creando lista en spotify
-PlaylistNueva = readline(prompt="Ingrese nombre la playlist a crear: ")
-user_id <- readline(prompt = "Ingrese su user id, ingresar URI string: ")
-auth_token <- get_spotify_authorization_code(scope = scope)
+#aca se me presento el problema siguiente, si no ingreso el string URI de usuario de spotify, no hay como crear la lista
+#spotify ahora dificulta encontrar esta info, ya que muestra el URI "enmascarado" con el username, no me permite hacer 
+#el request correspondiente, pero la logica esta bien y funciona con un URI "real"
+
+#PlaylistNueva = readline(prompt="Ingrese nombre la playlist a crear: ")
+#user_id <- readline(prompt = "Ingrese su user id, ingresar URI string: ")
+#auth_token <- get_spotify_authorization_code(scope = scope)
 
 
 #https://www.rdocumentation.org/packages/spotifyr/versions/2.1.1/topics/create_playlist
 
-playlist = create_playlist(user_id,PlaylistNueva, public = TRUE, collaborative = FALSE,
-                           description = NULL, authorization = get_spotify_authorization_code())
+#playlist = create_playlist(user_id,PlaylistNueva, public = TRUE, collaborative = FALSE,
+                           #description = NULL, authorization = get_spotify_authorization_code())
 
-playlist_vector = as.character(new_playlist[,1])
-uris = paste0('\"',playlist_vector, collapse = '\",', recycle0 = TRUE)
+#playlist_vector = as.character(new_playlist[,1])
+#uris = paste0('\"',playlist_vector, collapse = '\",', recycle0 = TRUE)
 
 
-preData = '{
-  "uris": [
-'
-postData ='"
-  ],
-  "position": 0
-}'
-actual <- capture.output(cat(preData,uris,postData))
-actual <- paste0(actual, collapse = '\n')
-urlapi = paste("https://api.spotify.com/v1/playlists/",playlist$id,"/tracks",sep = "")
+#preData = '{
+#  "uris": [
+#'
+#postData ='"
+#  ],
+#  "position": 0
+#}'
+#actual <- capture.output(cat(preData,uris,postData))
+#actual <- paste0(actual, collapse = '\n')
+#urlapi = paste("https://api.spotify.com/v1/playlists/",playlist$id,"/tracks",sep = "")
 
-POST(url = urlapi,config(content_type_json(),token = get_spotify_authorization_code()),body = actual)
+#POST(url = urlapi,config(content_type_json(),token = get_spotify_authorization_code()),body = actual)
 
 #info para crear el request a spotify
 #https://stackoverflow.com/questions/62413941/how-to-set-up-post-request-to-add-song-to-spotify-playlist-with-r
