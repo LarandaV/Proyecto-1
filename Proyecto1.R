@@ -119,7 +119,7 @@ write.table(new_playlist, PlaylistNueva) #muesta el numero de la cancion en la d
 #creando lista en spotify
 #aca se me presento el problema siguiente, si no ingreso el string URI de usuario de spotify, no hay como crear la lista
 #spotify ahora dificulta encontrar esta info, ya que muestra el URI "enmascarado" con el username, no me permite hacer 
-#el request correspondiente, pero la logica esta bien y funciona con un URI "real"
+#el request correspondiente
 
 #PlaylistNueva = readline(prompt="Ingrese nombre la playlist a crear: ")
 #user_id <- readline(prompt = "Ingrese su user id, ingresar URI string: ")
